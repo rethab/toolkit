@@ -363,8 +363,8 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
     ].join(' ')
   }
 
-  // const command = `$ErrorActionPreference = 'Stop' ; try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ; try { [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}', true) } catch {  if ($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException')
-  // {}}`
+  //TODO: remove this
+  command = `$ErrorActionPreference = 'Stop' ; try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ; [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}')`
 
   // run powershell
   const powershellPath = await io.which('powershell', true)
