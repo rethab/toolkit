@@ -346,39 +346,47 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
   const escapedDest = dest.replace(/'/g, "''").replace(/"|\n|\r/g, '')
   const pwshPath = await io.which('pwsh', false)
 
-  let command = ''
   if (pwshPath) {
-    //overwrite=true
-    command = [
+    const pwshCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.ZipFile } catch { } ;`,
       `try { [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}', $true) }`,
-      `catch { if ($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException'){ Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest} -Force } } ;`
+      `catch { if ($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException'){ Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest} -Force } else { $_ } } ;`
     ].join(' ')
+
+    const args = [
+      '-NoLogo',
+      '-NoProfile',
+      '-NonInteractive',
+      '-ExecutionPolicy',
+      'Unrestricted',
+      '-Command',
+      pwshCommand
+    ]
+    await exec(`"${pwshPath}"`, args)
+
   } else {
-    command = [
+
+    const powershellCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ;`,
       `[System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}')`
     ].join(' ')
+
+    const args = [
+      '-NoLogo',
+      '-Sta',
+      '-NoProfile',
+      '-NonInteractive',
+      '-ExecutionPolicy',
+      'Unrestricted',
+      '-Command',
+      powershellCommand
+    ]
+
+    const powershellPath = await io.which('powershell', true)    
+    await exec(`"${powershellPath}"`, args)
   }
-
-  //TODO: remove this
-  command = `$ErrorActionPreference = 'Stop' ; try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ; [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}')`
-
-  // run powershell
-  const powershellPath = await io.which('powershell', true)
-  const args = [
-    '-NoLogo',
-    '-Sta',
-    '-NoProfile',
-    '-NonInteractive',
-    '-ExecutionPolicy',
-    'Unrestricted',
-    '-Command',
-    command
-  ]
-  await exec(`"${powershellPath}"`, args)
 }
 
 async function extractZipNix(file: string, dest: string): Promise<void> {
