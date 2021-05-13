@@ -534,7 +534,7 @@ describe('@actions/tool-cache', function() {
     ).toBe('foo/hello: world')
   })
 
-  it('installs a zip and finds it', async () => {
+  it.each(['pwsh', 'powershell'])('installs a zip and finds it', async (powershellTool) => {
     const tempDir = path.join(__dirname, 'test-install-zip')
     try {
       await io.mkdirP(tempDir)
@@ -570,6 +570,19 @@ describe('@actions/tool-cache', function() {
       } else {
         const zipPath: string = await io.which('zip', true)
         await exec.exec(`"${zipPath}`, [zipFile, '-r', '.'], {cwd: stagingDir})
+      }
+
+      let originalPath = process.env['PATH']
+      if (powershellTool === 'powershell') {
+        console.log('=== Testing with powershell.exe')
+        //remove pwsh from PATH temporarily to test fallback case
+        const newPath = originalPath.split(';').filter((segment) => {
+          return !segment.startsWith(`C:\Program Files\PowerShell`)
+        }).join(';')
+        console.log(`=== originalpath === newPath: ${originalPath === newPath}`)
+        process.env['PATH'] = newPath
+      } else {
+        console.log('=== Testing with pwsh')
       }
 
       const extPath: string = await tc.extractZip(zipFile)
