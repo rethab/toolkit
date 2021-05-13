@@ -373,7 +373,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
     const powershellCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ;`,
-      `Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest} -Force`
+      `Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest}' -Force`
     ].join(' ')
 
     const args = [
