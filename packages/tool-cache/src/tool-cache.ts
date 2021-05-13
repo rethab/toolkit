@@ -348,7 +348,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
 
   //To match the file overwrite behavior on nix systems, we use the overwrite = true flag for ExtractToDirectory
   //and the -Force flag for Expand-Archive as a fallback
-  if (pwshPath && false) {
+  if (pwshPath) {
     //attempt to use pwsh with ExtractToDirectory, if this fails attempt Expand-Archive
     const pwshCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
@@ -357,6 +357,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       `catch { if ($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException'){ Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest} -Force } else { $_ } } ;`
     ].join(' ')
 
+    console.log()
     const args = [
       '-NoLogo',
       '-NoProfile',
@@ -367,6 +368,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       pwshCommand
     ]
 
+    console.log(`args: ${args}`)
     core.debug(`Using pwsh at path: ${pwshPath}`)
     await exec(`"${pwshPath}"`, args)
 
