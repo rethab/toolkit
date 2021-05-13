@@ -348,7 +348,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
 
   //To match the file overwrite behavior on nix systems, we use the overwrite = true flag for ExtractToDirectory
   //and the -Force flag for Expand-Archive as a fallback
-  if (pwshPath) {
+  if (pwshPath && false) {
     //attempt to use pwsh with ExtractToDirectory, if this fails attempt Expand-Archive
     const pwshCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
@@ -400,6 +400,7 @@ async function extractZipNix(file: string, dest: string): Promise<void> {
   if (!core.isDebug()) {
     args.unshift('-q')
   }
+  args.unshift('-o') //overwrite with -o, otherwise a prompt is shown which freezes the run
   await exec(`"${unzipPath}"`, args, {cwd: dest})
 }
 
