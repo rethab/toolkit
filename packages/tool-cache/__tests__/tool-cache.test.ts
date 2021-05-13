@@ -636,7 +636,9 @@ describe('@actions/tool-cache', function() {
         expect(fs.existsSync(toolPath)).toBeTruthy()
         expect(fs.existsSync(`${toolPath}.complete`)).toBeTruthy()
         expect(fs.existsSync(path.join(toolPath, 'file.txt'))).toBeTruthy()
-        expect(fs.readFileSync(path.join(toolPath, 'file.txt'), 'utf8')).toBe('originalText')
+        expect(fs.readFileSync(path.join(toolPath, 'file.txt'), 'utf8')).toBe(
+          'originalText'
+        )
         expect(
           fs.existsSync(path.join(toolPath, 'folder', 'nested-file.txt'))
         ).toBeTruthy()

@@ -357,7 +357,6 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       `catch { if ($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException'){ Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest}' -Force } else { $_ } } ;`
     ].join(' ')
 
-    console.log()
     const args = [
       '-NoLogo',
       '-NoProfile',
@@ -368,10 +367,8 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       pwshCommand
     ]
 
-    console.log(`args: ${args}`)
     core.debug(`Using pwsh at path: ${pwshPath}`)
     await exec(`"${pwshPath}"`, args)
-
   } else {
     const powershellCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
@@ -390,8 +387,8 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       powershellCommand
     ]
 
-    const powershellPath = await io.which('powershell', true)  
-    core.debug(`Using powershell at path: ${powershellPath}`)  
+    const powershellPath = await io.which('powershell', true)
+    core.debug(`Using powershell at path: ${powershellPath}`)
     await exec(`"${powershellPath}"`, args)
   }
 }
