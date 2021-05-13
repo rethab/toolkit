@@ -577,7 +577,7 @@ describe('@actions/tool-cache', function() {
       if (powershellTool === 'powershell') {
         console.log('=== Testing with powershell.exe')
         //remove pwsh from PATH temporarily to test fallback case
-        const newPath = originalPath.split(';').filter((segment) => {
+        const newPath = originalPath?.split(';').filter((segment) => {
           return !segment.startsWith(`C:\Program Files\PowerShell`)
         }).join(';')
         console.log(`=== originalpath === newPath: ${originalPath === newPath}`)
