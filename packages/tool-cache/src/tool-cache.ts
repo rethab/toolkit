@@ -347,6 +347,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
   const pwshPath = await io.which('pwsh', false)
 
   if (pwshPath) {
+    //attempt to use pwsh with ExtractToDirectory, if this fails attempt Expand-Archive
     const pwshCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.ZipFile } catch { } ;`,
@@ -370,7 +371,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
     const powershellCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ;`,
-      `[System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}')`
+      `[System.IO.Compression.ZipFile]::Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest} -Force`
     ].join(' ')
 
     const args = [
