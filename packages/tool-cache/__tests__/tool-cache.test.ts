@@ -536,6 +536,7 @@ describe('@actions/tool-cache', function() {
 
   it.each(['pwsh', 'powershell'])('installs a zip and finds it', async (powershellTool) => {
     const tempDir = path.join(__dirname, 'test-install-zip')
+    let originalPath = process.env['PATH']
     try {
       await io.mkdirP(tempDir)
 
@@ -572,7 +573,7 @@ describe('@actions/tool-cache', function() {
         await exec.exec(`"${zipPath}`, [zipFile, '-r', '.'], {cwd: stagingDir})
       }
 
-      let originalPath = process.env['PATH']
+      
       if (powershellTool === 'powershell') {
         console.log('=== Testing with powershell.exe')
         //remove pwsh from PATH temporarily to test fallback case
@@ -597,6 +598,7 @@ describe('@actions/tool-cache', function() {
       ).toBeTruthy()
     } finally {
       await io.rmRF(tempDir)
+      process.env['PATH'] = originalPath
     }
   })
 
