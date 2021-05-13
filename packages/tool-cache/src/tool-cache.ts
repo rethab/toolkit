@@ -388,8 +388,9 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
     ]
 
     console.log(`=== Path:`)
-    await exec('$env:PATH')
     const powershellPath = await io.which('powershell', true)
+    await exec(`"${powershellPath}"`,[`-Command '$env:Path'`])
+
     core.debug(`Using powershell at path: ${powershellPath}`)
     await exec(`"${powershellPath}"`, args)
   }
