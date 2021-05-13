@@ -346,6 +346,8 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
   const escapedDest = dest.replace(/'/g, "''").replace(/"|\n|\r/g, '')
   const pwshPath = await io.which('pwsh', false)
 
+  //To match the file overwrite behavior on nix systems, we use the overwrite = true flag for ExtractToDirectory
+  //and the -Force flag for Expand-Archive as a fallback
   if (pwshPath) {
     //attempt to use pwsh with ExtractToDirectory, if this fails attempt Expand-Archive
     const pwshCommand = [
@@ -364,10 +366,11 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       '-Command',
       pwshCommand
     ]
+
+    core.debug(`Using pwsh at path: ${pwshPath}`)
     await exec(`"${pwshPath}"`, args)
 
   } else {
-
     const powershellCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ;`,
@@ -385,7 +388,8 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       powershellCommand
     ]
 
-    const powershellPath = await io.which('powershell', true)    
+    const powershellPath = await io.which('powershell', true)  
+    core.debug(`Using powershell at path: ${powershellPath}`)  
     await exec(`"${powershellPath}"`, args)
   }
 }
