@@ -538,7 +538,7 @@ describe('@actions/tool-cache', function() {
     'installs a zip and finds it (%s)',
     async powershellTool => {
       const tempDir = path.join(__dirname, 'test-install-zip')
-      let originalPath = process.env['PATH']
+      const originalPath = process.env['PATH']
       try {
         await io.mkdirP(tempDir)
 
