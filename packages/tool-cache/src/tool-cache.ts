@@ -353,8 +353,8 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
     const pwshCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.ZipFile } catch { } ;`,
-      `try { [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}', $true) }`,
-      `catch { if ($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException'){ Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest}' -Force } else { $_ } } ;`
+      `try { [System.IO.Compression.ZipFile]::ExtractToDirectory('${escapedFile}', '${escapedDest}') }`,
+      `catch { if ($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException'){ Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest}'} else { $_ } } ;`
     ].join(' ')
 
     const args = [
@@ -399,7 +399,7 @@ async function extractZipNix(file: string, dest: string): Promise<void> {
   if (!core.isDebug()) {
     args.unshift('-q')
   }
-  args.unshift('-o') //overwrite with -o, otherwise a prompt is shown which freezes the run
+  // args.unshift('-o') //overwrite with -o, otherwise a prompt is shown which freezes the run
   await exec(`"${unzipPath}"`, args, {cwd: dest})
 }
 
