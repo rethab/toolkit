@@ -373,7 +373,7 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
     const powershellCommand = [
       `$ErrorActionPreference = 'Stop' ;`,
       `try { Add-Type -AssemblyName System.IO.Compression.FileSystem } catch { } ;`,
-      `[System.IO.Compression.ZipFile]::Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest} -Force`
+      `Expand-Archive -LiteralPath '${escapedFile}' -DestinationPath '${escapedDest} -Force`
     ].join(' ')
 
     const args = [
@@ -387,6 +387,8 @@ async function extractZipWin(file: string, dest: string): Promise<void> {
       powershellCommand
     ]
 
+    console.log(`=== Path:`)
+    await exec('$Env:Path')
     const powershellPath = await io.which('powershell', true)
     core.debug(`Using powershell at path: ${powershellPath}`)
     await exec(`"${powershellPath}"`, args)
