@@ -573,17 +573,18 @@ describe('@actions/tool-cache', function() {
         await exec.exec(`"${zipPath}`, [zipFile, '-r', '.'], {cwd: stagingDir})
       }
 
-      
-      if (powershellTool === 'powershell') {
-        console.log('=== Testing with powershell.exe')
-        //remove pwsh from PATH temporarily to test fallback case
-        const newPath = originalPath?.split(';').filter((segment) => {
-          return !segment.startsWith(`C:\Program Files\PowerShell`)
-        }).join(';')
-        console.log(`=== originalpath === newPath: ${originalPath === newPath}`)
-        process.env['PATH'] = newPath
-      } else {
-        console.log('=== Testing with pwsh')
+      if (IS_WINDOWS) {
+        if (powershellTool === 'powershell') {
+          console.log('=== Testing with powershell.exe')
+          //remove pwsh from PATH temporarily to test fallback case
+          const newPath = originalPath?.split(';').filter((segment) => {
+            return !segment.startsWith(`C:\\Program Files\\PowerShell`)
+          }).join(';')
+          console.log(`=== originalpath === newPath: ${originalPath === newPath}`)
+          process.env['PATH'] = newPath
+        } else {
+          console.log('=== Testing with pwsh')
+        }
       }
 
       const extPath: string = await tc.extractZip(zipFile)
